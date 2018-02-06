@@ -6,6 +6,7 @@ import glob
 import os.path
 import random
 import numpy as np
+import collections
 import tensorflow as tf
 from tensorflow.python.platform  import gfile
 
@@ -15,7 +16,7 @@ JPEG_DATA_TENSOR_NAME = 'DecodeJpeg/contents:0'
 
 MODEL_DIR = '../data/model'
 MODEL_FILE ='tensorflow_inception_graph.pb'
-CHECK_DIR = '../data/bottleneck'
+CHECK_DIR = '../data/bottleneck/mix/'
 INPUT_DATA = '../data/flowers/'
 
 VALIDATION_PERCENTAGE = 10
@@ -27,7 +28,7 @@ BATCH = 100
 
 #从数据文件夹中读取所有的图片列表，并按训练，验证，测试数据分开
 def create_image_lists(testing_percentage,validation_percnetage):
-    result = {}
+    result = collections.OrderedDict()
     sub_dirs = [x[0] for x in os.walk(INPUT_DATA)]
     is_root_dir = True
     for sub_dir in sub_dirs:
@@ -199,6 +200,7 @@ def get_test_bottlenecks(sess,image_lists,n_classes,jpeg_data_tensor,bottleneck_
 
 def main():
     image_lists = create_image_lists(TEST_PERCENTAGE,VALIDATION_PERCENTAGE)
+    print(image_lists.keys())
     n_classes = len(image_lists.keys())
 
     with gfile.FastGFile(os.path.join(MODEL_DIR,MODEL_FILE),'rb') as f:
@@ -208,6 +210,8 @@ def main():
     #加载读取的Inception-v3模型，返回数据输入对应的张量以及计算瓶颈层结果对应的张量
     bottleneck_tensor,jpeg_data_tensor = tf.import_graph_def(graph_def,return_elements=[BOTTLENECK_TENSOR_NAME,JPEG_DATA_TENSOR_NAME])
 
+    # BOTTLENECK_TENSOR_SIZE = 2048
+    # 占位符，可以理解为形参
     bottleneck_input = tf.placeholder(tf.float32,[None,BOTTLENECK_TENSOR_SIZE],name="BottleneckInputPlaceholder")
     ground_truth_input = tf.placeholder(tf.float32,[None,n_classes],name="GroundTruthInput")
 
@@ -217,7 +221,7 @@ def main():
         logits = tf.matmul(bottleneck_input, weights) + biases
         final_tensor = tf.nn.softmax(logits)
 
-        # 损失
+        # 损失---交叉熵---反应的是两者之间的相近程度
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=ground_truth_input)
     cross_entropy_mean = tf.reduce_mean(cross_entropy)
     # 优化
@@ -225,6 +229,7 @@ def main():
 
     # 正确率
     with tf.name_scope('evaluation'):
+        # tf.equal(A, B)是对比这两个矩阵或者向量的相等的元素，如果是相等的那就返回True，反正返回False，返回的值的矩阵维度和A是一样的
         correct_prediction = tf.equal(tf.argmax(final_tensor, 1), tf.argmax(ground_truth_input, 1))
         evaluation_step = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
@@ -238,8 +243,7 @@ def main():
             train_bottlenecks, train_ground_truth = get_random_cached_bottlenecks(
                 sess, n_classes, image_lists, BATCH, 'training', jpeg_data_tensor, bottleneck_tensor)
             # 训练
-            sess.run(train_step,
-                     feed_dict={bottleneck_input: train_bottlenecks, ground_truth_input: train_ground_truth})
+            sess.run(train_step,feed_dict={bottleneck_input: train_bottlenecks, ground_truth_input: train_ground_truth})
 
             # 验证
             if i % 100 == 0 or i + 1 == STEPS:

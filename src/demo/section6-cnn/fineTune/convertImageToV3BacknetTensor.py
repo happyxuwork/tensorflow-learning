@@ -14,12 +14,12 @@ BOTTLENECK_TENSOR_SIZE = 2048
 BOTTLENECK_TENSOR_NAME = 'pool_3/_reshape:0'
 JPEG_DATA_TENSOR_NAME = 'DecodeJpeg/contents:0'
 
-MODEL_DIR = '../data/model'
+MODEL_DIR = '../../data/model'
 MODEL_FILE ='tensorflow_inception_graph.pb'
 # CHECK_DIR = '../data/dataforclassify/test/'
-CHECK_DIR = 'F:/converImgtoTensor/adding/tensor-valuation/'
+CHECK_DIR = 'F:/converImgtoTensor/adding/tensor-training/'
 # INPUT_DATA = '../data/dataforclassify/mix/'
-INPUT_DATA = 'F:/converImgtoTensor/adding/data-valuation/'
+INPUT_DATA = 'F:/converImgtoTensor/adding/data-training/'
 
 # 模型保存路径
 MODEL_SAVE_PATH = "E:/tensorflow/classify"

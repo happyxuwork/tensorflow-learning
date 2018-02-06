@@ -33,7 +33,6 @@ STEPS = 10000
 BATCH = 100
 
 
-
 #从数据文件夹中读取所有的图片列表，并按训练，验证，测试数据分开
 def create_image_lists(testing_percentage,validation_percnetage):
     result = {}
