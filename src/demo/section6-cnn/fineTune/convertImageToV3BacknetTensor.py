@@ -102,47 +102,10 @@ def main(InputData_path):
                 # os.makedirs(bottleneck_path)
                 bottleneck_value = create_bottleneck(sess,file_image,bottleneck_path,jpeg_data_tensor,bottleneck_tensor)
                 sess.run(bottleneck_value)
-                # print(bottleneck_value)
+                print(bottleneck_value)
 
 if __name__ == "__main__":
     main(INPUT_DATA)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #从数据文件夹中读取所有的图片列表，并按训练，验证，测试数据分开

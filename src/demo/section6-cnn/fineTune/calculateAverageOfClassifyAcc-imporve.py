@@ -25,6 +25,7 @@ from tensorflow.python.framework.graph_util import convert_variables_to_constant
 # print(nameAndPositon[first])
 
 def getOneImgClassifyProb(sess,imageToTensorPath):
+    # with tf.Graph().as_default():
     # chkName = tf.train.latest_checkpoint('E:/tensorflow/selfmodelclassify/')
     # saver = tf.train.import_meta_graph(chkName + '.meta')
     # saver.restore(sess, tf.train.latest_checkpoint('E:/tensorflow/selfmodelclassify/'))
@@ -41,7 +42,7 @@ def getOneImgClassifyProb(sess,imageToTensorPath):
 
 def getListImgClassifyProb(sess,imageList):
     listLen = len(imageList)
-    totalImgProb = np.zeros(8)
+    totalImgProb = np.zeros(22)
     for imgPath in imageList:
         oneImgProb = getOneImgClassifyProb(sess,imgPath)
         totalImgProb = np.add(totalImgProb,oneImgProb)
@@ -63,9 +64,10 @@ def main(input_data_tensor_valuation_path,input_data_training_path):
     print(nameAndPositon)
     print(nameAndPositon['apple'])
     print(type(nameAndPositon))
-    # [('apple', '0'), ('chinese', '1'), ('hgymany', '2'), ('hgyone', '3'), ('horse', '4'), ('many', '5'),
-    # ('monet', '6'), ('noSmile', '7'), ('oil', '8'), ('one', '9'), ('orange', '10'), ('smile', '11'),
-    # ('summer', '12'), ('vango', '13'), ('winter', '14'), ('zebra', '15')])
+    # 22
+    # 分类位置备注
+    # ['apple', 'chinese', 'edges', 'hands', 'hedges', 'hgymany', 'hgyone', 'horse', 'many', 'map', 'monet', 'nosmile',
+    #  'oil', 'one', 'orange', 'photo', 'shoes', 'smile', 'summer', 'vango', 'winter', 'zebra']
 
 
     # nameAndPositon = {'orange': '0', 'apple': '1', 'one': '2', 'zebra': '3','horse':'4','chinese': '5', 'oil': '6', 'many': '7'}
@@ -90,9 +92,9 @@ def main(input_data_tensor_valuation_path,input_data_training_path):
         print(base_name + "文件夹底下共" + str(len(fakeA_img_list)+len(fakeB_img_list))+"张图像")
 
         with tf.Session() as sess:
-            chkName = tf.train.latest_checkpoint('E:/tensorflow/selfmodelclassify-more/')
+            chkName = tf.train.latest_checkpoint('E:/tensorflow/22classify/')
             saver = tf.train.import_meta_graph(chkName + '.meta')
-            saver.restore(sess, tf.train.latest_checkpoint('E:/tensorflow/selfmodelclassify-more/'))
+            saver.restore(sess, tf.train.latest_checkpoint('E:/tensorflow/22classify/'))
             fakeA_img_average_prob = getListImgClassifyProb(sess,fakeA_img_list)
             fakeB_img_average_prob = getListImgClassifyProb(sess,fakeB_img_list)
             # print(fakeA_img_average_prob)
@@ -116,7 +118,7 @@ if __name__ == "__main__":
     # print(np.divide(addTo,2))
 
     # input_data_tensor_valuation_path = 'F:/converImgtoTensor/tensor-valuation/'
-    input_data_tensor_valuation_path = 'F:/converImgtoTensor/adding/tensor-valuation/'
+    input_data_tensor_valuation_path = 'F:/converImgtoTensor/tensor-valuation/'
     input_data_training_path = 'F:/converImgtoTensor/tensor-training/'
     main(input_data_tensor_valuation_path,input_data_training_path)
 
